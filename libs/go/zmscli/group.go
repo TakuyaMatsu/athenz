@@ -123,7 +123,7 @@ func (cli Zms) AddGroup(dn string, gn string, groupMembers []*zms.GroupMember) (
 	fullResourceName := dn + ":group." + gn
 	var group zms.Group
 	_, err := cli.Zms.GetGroup(zms.DomainName(dn), zms.EntityName(gn), nil, nil)
-	if err == nil {
+	if err == nil && !cli.Overwrite {
 		return nil, fmt.Errorf("group already exists: %v", fullResourceName)
 	}
 	switch v := err.(type) {

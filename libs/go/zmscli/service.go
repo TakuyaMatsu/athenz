@@ -72,7 +72,7 @@ func (cli Zms) ShowUpdatedService(service *zms.ServiceIdentity) (*string, error)
 func (cli Zms) AddService(dn string, sn string, keyID string, pubKey *string) (*string, error) {
 	shortName := shortname(dn, sn)
 	service, err := cli.Zms.GetServiceIdentity(zms.DomainName(dn), zms.SimpleName(shortName))
-	if err == nil {
+	if err == nil && !cli.Overwrite {
 		return nil, fmt.Errorf("Service identity already exists: " + string(service.Name) + " - use add-public-key to add a key")
 	}
 	longName := dn + "." + shortName
@@ -110,7 +110,7 @@ func (cli Zms) AddService(dn string, sn string, keyID string, pubKey *string) (*
 func (cli Zms) AddProviderService(dn string, sn string, keyID string, pubKey *string) (*string, error) {
 	shortName := shortname(dn, sn)
 	service, err := cli.Zms.GetServiceIdentity(zms.DomainName(dn), zms.SimpleName(shortName))
-	if err == nil {
+	if err == nil && !cli.Overwrite {
 		return nil, fmt.Errorf("Service identity already exists: " + string(service.Name) + " - use add-public-key to add a key")
 	}
 	longName := dn + "." + shortName
@@ -141,7 +141,7 @@ func (cli Zms) AddProviderService(dn string, sn string, keyID string, pubKey *st
 	fullResourceName := dn + ":role." + rn
 	var role zms.Role
 	_, err = cli.Zms.GetRole(zms.DomainName(dn), zms.EntityName(rn), nil, nil, nil)
-	if err == nil {
+	if err == nil && !cli.Overwrite {
 		return nil, fmt.Errorf("provider service created but self serve role already exists: %v", fullResourceName)
 	}
 	switch v := err.(type) {
@@ -163,7 +163,7 @@ func (cli Zms) AddProviderService(dn string, sn string, keyID string, pubKey *st
 	pn := shortName + "_self_serve"
 	fullResourceName = dn + ":policy." + pn
 	_, err = cli.Zms.GetPolicy(zms.DomainName(dn), zms.EntityName(pn))
-	if err == nil {
+	if err == nil && !cli.Overwrite {
 		return nil, fmt.Errorf("provider service created but self serve policy already exists: %v", fullResourceName)
 	}
 	switch v := err.(type) {
@@ -209,7 +209,7 @@ func (cli Zms) AddProviderService(dn string, sn string, keyID string, pubKey *st
 func (cli Zms) AddServiceWithKeys(dn string, sn string, publicKeys []*zms.PublicKeyEntry) (*string, error) {
 	shortName := shortname(dn, sn)
 	service, err := cli.Zms.GetServiceIdentity(zms.DomainName(dn), zms.SimpleName(shortName))
-	if err == nil {
+	if err == nil && !cli.Overwrite {
 		return nil, fmt.Errorf("Service identity already exists: " + string(service.Name) + " - use add-public-key to add a key")
 	}
 	longName := dn + "." + shortName
